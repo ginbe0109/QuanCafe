@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.user.quancafe.activity.activity.MainActivity">
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolBarMain"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="#67b9b7">
+
+            </android.support.v7.widget.Toolbar>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/frameLayoutMain"
+
+                >
+
+            </FrameLayout>
+
+            <android.support.design.widget.BottomNavigationView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:id="@+id/bottomNavigationMain"
+                app:itemIconTint="@color/colorNavIcon"
+                app:itemTextColor="@color/colorNavText"
+                app:menu="@menu/navigationbottom"
+                android:background="@color/colorPrimary"
+                >
+
+            </android.support.design.widget.BottomNavigationView>
+
+            <!--<com.aurelhubert.ahbottomnavigation.AHBottomNavigation-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom"-->
+                <!--android:id="@+id/bottomNavigationMain"-->
+                <!--app:itemIconTint="@color/colorNavIcon"-->
+                <!--app:itemTextColor="@color/colorNavText"-->
+                <!--app:menu="@menu/navigationbottom"-->
+                <!--android:background="@color/colorPrimary"-->
+
+                <!--&gt;-->
+
+            <!--</com.aurelhubert.ahbottomnavigation.AHBottomNavigation>-->
+        </LinearLayout>
+
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigationViewMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="10"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#cfcdcd"
+                    android:orientation="vertical"
+                    android:layout_weight="2"
+                    android:padding="10dp"
+                    android:paddingBottom="5dp"
+                    >
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:layout_marginBottom="15dp"
+                        android:id="@+id/image_main_user_sign_in"
+
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="thaiphuoc@gmail.com"
+                            android:paddingBottom="5dp"
+                            android:id="@+id/textview_main_user_sign_in"
+                            />
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <ImageButton
+                                android:padding="10dp"
+                                android:layout_marginLeft="130dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/down"
+                                android:id="@+id/imge_user_main_sua"
+                                />
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/imge_user_main_menu"
+                                android:src="@drawable/up"
+                                android:padding="10dp"
+                                android:layout_marginLeft="130dp"
+                                />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="7"
+                    android:background="#fff"
+                    >
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <ListView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/listViewCauHinhTaiKhoan"
+                            ></ListView>
+                        <ListView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/listViewMainNavigation"
+                            ></ListView>
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.design.widget.NavigationView>
+
+    </android.support.v4.widget.DrawerLayout>
+
+
+
+
+</LinearLayout>
