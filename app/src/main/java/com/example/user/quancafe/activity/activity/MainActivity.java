@@ -215,14 +215,20 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayoutMain.closeDrawer(GravityCompat.START);
                         break;
                     case 1:
-//                        FirebaseAuth.getInstance().signOut();
-//                        sendtoStart();
+                        SendToLogIn();
                         drawerLayoutMain.closeDrawer(GravityCompat.START);
                         break;
 
                 }
             }
         });
+    }
+
+    private void SendToLogIn() {
+        LogInActivity.isLogin = false;
+        Intent intent = new Intent(getApplicationContext(),LogInActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void ActionBar() {
