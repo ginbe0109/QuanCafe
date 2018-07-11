@@ -101,10 +101,15 @@ public class HomeFragment extends Fragment {
 
                 //Inflate the fragment
                 getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
+                //CheckConnect.ShowToast(getContext(), String.valueOf(arrayLoaiMon.get(position).getIdloai()));
 
 //                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //                fragmentTransaction.add(R.id.contentMain, new DanhMucFragment());
 //                fragmentTransaction.commit();
+
+//                //Retrieve the value
+                //In onCreateView of the new Fragment:
+//                String value = getArguments().getString("YourKey");
 
             }
         });

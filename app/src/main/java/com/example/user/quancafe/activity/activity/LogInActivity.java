@@ -125,7 +125,7 @@ public class LogInActivity extends AppCompatActivity {
                 String account = editAccount.getText().toString().trim();
                 String pass = editPassWord.getText().toString().trim();
                 if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(pass)){
-                    ActionProgressbar("Đăng ký tài khoản","Vui lòng chờ chờ giây lát để hoàn thành đăng ký");
+                    ActionProgressbar("Đăng nhập tài khoản","Vui lòng chờ chờ giây lát để hoàn thành đăng ký");
                     ActionLogIn(account,pass);
                 }else{
                     CheckConnect.ShowToast(getApplicationContext(),"Vui lòng nhập đầy đủ thông tin");
