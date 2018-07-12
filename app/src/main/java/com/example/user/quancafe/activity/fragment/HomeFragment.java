@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void GetData() {
-        final RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        final RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         JsonArrayRequest arrRequest = new JsonArrayRequest(Server.Duongdanloaimon, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

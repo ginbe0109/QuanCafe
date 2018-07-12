@@ -38,17 +38,17 @@ import java.util.Map;
 
 public class NotificationFragment extends Fragment {
     private View view;
-    int idloai = 0;
-    int page = 1;
+    private int idloai = 0;
+    private int page = 1;
 
     private ArrayList<MonAn> arrayMonAn;
     private ListView listViewMonAn;
-    DanhSachMonAnAdapter danhSachMonAnAdapter;
+    private DanhSachMonAnAdapter danhSachMonAnAdapter;
     private View footerview;
 
-    boolean isLoading = false;
-    boolean limitData = false;
-    mHandler mHandler;
+    private boolean isLoading = false;
+    private boolean limitData = false;
+    private mHandler mHandler;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,19 +58,20 @@ public class NotificationFragment extends Fragment {
 
 
         AnhXa();
-        footerview = inflater.inflate(R.layout.progressbar, null);
-//        if (bundle != null) {
 
         Bundle bundle = this.getArguments();
-        String myIdLoai = bundle.getString("idloai");
-        idloai = Integer.parseInt(myIdLoai);
-       // CheckConnect.ShowToast(getContext(),idloai+"");
+        if (bundle != null) {
+
+            // lấy id loại
+            String myIdLoai = bundle.getString("idloai");
+            idloai = Integer.parseInt(myIdLoai);
+           // CheckConnect.ShowToast(getContext(),idloai+"");
 
 
-        GetData(page);
-        LoadMoreData();
+            GetData(page);
+            LoadMoreData();
 
-//        }
+        }
 
         return view;
 
@@ -79,11 +80,10 @@ public class NotificationFragment extends Fragment {
     }
 
     private void LoadMoreData() {
-        // bắt sự kiện kéo của listView
         listViewMonAn.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // vuốt listView đến vị trí nào đó trả vào trong function này
+
             }
 
             @Override
@@ -91,13 +91,14 @@ public class NotificationFragment extends Fragment {
                 // vuốt listView trả vào trong function này
                 // hàm if để bắt giá trị cuối trong
                 //lần đầu tiên run lên thì totalItenCount = 0 nên đặt total khác không để không bị nhảy vào function if liền
-                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0 && isLoading != true && limitData != true) {
+                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0 && isLoading == false && limitData == false) {
                     // nhảy vào function thì đang load dữ liệu
                     isLoading = true;
                     // Thực hiện cho Theard hoạt động
                     ThreadData threadData = new ThreadData();
                     threadData.start();
                 }
+
             }
         });
 
@@ -107,7 +108,7 @@ public class NotificationFragment extends Fragment {
     // sau đó lấy dữ liệu(là thông tin món ăn) về theo idloai
     // biến page giúp lấy đối tượng theo từng trang
     private void GetData(int page) {
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         String duongdan = Server.Duongdandanhsachmontheoloai + String.valueOf(page);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, duongdan, new Response.Listener<String>() {
             // dùng phương thức này để lấy dữ liệu về
@@ -120,7 +121,7 @@ public class NotificationFragment extends Fragment {
                 String hinhMon = "";
                 String motaMon = "";
                 float dongiaMon = 0;
-                if (response != null&& response.length() != 0) {
+                if (response != null && response.length() != 2) {
                     // có dữ liệu trả về thì thanh progressBar tắt đi
                     listViewMonAn.removeFooterView(footerview);
                     try {
@@ -184,6 +185,9 @@ public class NotificationFragment extends Fragment {
         danhSachMonAnAdapter = new DanhSachMonAnAdapter(arrayMonAn,getActivity());
         listViewMonAn.setAdapter(danhSachMonAnAdapter);
 
+        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+        footerview = layoutInflater.inflate(R.layout.progressbar, null);
+
         // khởi tạo handler
         mHandler = new mHandler();
     }
@@ -221,7 +225,7 @@ public class NotificationFragment extends Fragment {
             mHandler.sendEmptyMessage(0);
             try {
                 // cho nó ngủ 1s
-                Thread.sleep(3000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

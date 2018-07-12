@@ -1,5 +1,6 @@
 package com.example.user.quancafe.activity.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listViewMenu, listViewCauHinh;
     private ImageButton imageViewCauHinh;
     private ImageButton imageViewMenu;
+    public static Context context;
 
     private CircleImageView circleImageUserSignIn;
     private TextView textUserSignIn;
