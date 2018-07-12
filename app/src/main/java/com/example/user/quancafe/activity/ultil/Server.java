@@ -10,5 +10,6 @@ public class Server {
     public static String urlRegistation = "http://"+localhost+"/Cafe/ConnectServerCafe/registation.php";
     public static String urlLogIn = "http://"+localhost+"/Cafe/ConnectServerCafe/logIn.php";
     public static String Duongdanloaimon = "http://" + localhost + "/Cafe/ConnectServerCafe/getloaimon.php";
+    public static String urlMon = "http://" + localhost + "/Cafe/ConnectServerCafe/getmonan.php?page=";
     public static String Duongdandanhsachmontheoloai = "http://" + localhost + "/Cafe/ConnectServerCafe/getmonantheoloai.php?page=";
 }

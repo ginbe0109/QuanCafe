@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -49,6 +50,7 @@ public class NotificationFragment extends Fragment {
     private boolean isLoading = false;
     private boolean limitData = false;
     private mHandler mHandler;
+    private Bundle bundle;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,15 +61,14 @@ public class NotificationFragment extends Fragment {
 
         AnhXa();
 
-        Bundle bundle = this.getArguments();
+        bundle = this.getArguments();
         if (bundle != null) {
 
+            // Danh sách món ăn theo từng loại
             // lấy id loại
             String myIdLoai = bundle.getString("idloai");
             idloai = Integer.parseInt(myIdLoai);
            // CheckConnect.ShowToast(getContext(),idloai+"");
-
-
             GetData(page);
             LoadMoreData();
 
@@ -80,6 +81,24 @@ public class NotificationFragment extends Fragment {
     }
 
     private void LoadMoreData() {
+        // bắt sự kiện click vào từng Item
+        listViewMonAn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent(getApplicationContext(),ChiTietMonActivity.class);
+//                intent.putExtra("thongtinmon",arrayMonAn.get(position));
+//                startActivity(intent);
+                DetailFoodFragment noti = new DetailFoodFragment();
+                Bundle thongtinMon = new Bundle();
+                thongtinMon.putSerializable("thongtinmon", arrayMonAn.get(position));
+
+                noti.setArguments(thongtinMon);
+
+                //Inflate the fragment
+                getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
+
+            }
+        });
         listViewMonAn.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {

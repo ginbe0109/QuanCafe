@@ -1,6 +1,5 @@
 package com.example.user.quancafe.activity.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +26,7 @@ import com.example.user.quancafe.activity.fragment.DasboardFragment;
 import com.example.user.quancafe.activity.fragment.HomeFragment;
 import com.example.user.quancafe.activity.fragment.NotificationFragment;
 import com.example.user.quancafe.activity.fragment.ProfileFragment;
+import com.example.user.quancafe.activity.model.Giohang;
 import com.example.user.quancafe.activity.model.Menu;
 
 import java.util.ArrayList;
@@ -51,10 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private ListView listViewMenu, listViewCauHinh;
     private ImageButton imageViewCauHinh;
     private ImageButton imageViewMenu;
-    public static Context context;
 
     private CircleImageView circleImageUserSignIn;
     private TextView textUserSignIn;
+
+    // mảng giỏ hàng chứa toàn bộ thông tin của các màn hình
+    // khai báo public static để các màng hình đều truy cấp được để không mất dữ liệu
+    public static ArrayList<Giohang> mangGiohang;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -285,6 +289,18 @@ public class MainActivity extends AppCompatActivity {
         listViewMenu.setVisibility(View.VISIBLE);
         imageViewMenu.setVisibility(View.INVISIBLE);
         imageViewCauHinh.setVisibility(View.VISIBLE);
+
+
+
+        //cấp phát vùng bộ nhớ cho mảng
+        if(mangGiohang != null){
+            // nếu mảng Giỏ Hàng đã có dữ liệu thì không cấp phát lại
+            // để không bị mất dữ liệu
+        }else{
+            // ngược lại mảng không có dữ liệu thì cấp phát vùng bộ nhớ
+            mangGiohang = new ArrayList<>();
+        }
+
     }
 
 }
