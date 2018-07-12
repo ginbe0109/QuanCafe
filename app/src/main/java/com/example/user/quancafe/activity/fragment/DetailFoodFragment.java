@@ -38,6 +38,7 @@ public class DetailFoodFragment extends Fragment {
 
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,8 +107,9 @@ public class DetailFoodFragment extends Fragment {
                     // thêm và giỏi hàng
                     MainActivity.mangGiohang.add(new Giohang(idMon,tenMon,Giamoi,hinhMon,soluong));
                 }
-//                Intent intent = new Intent(Chitiecsanpham.this,GiohangActivity.class);
-//                startActivity(intent);
+                // chuyển qua fragment Giỏ hàng
+                DasboardFragment gioHang = new DasboardFragment();
+                getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, gioHang).commit();
             }
         });
     }
