@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.user.quancafe.R;
@@ -28,6 +29,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile,null);
         AnhXa();
+        ActionClickGridView();
         return view;
     }
 
@@ -47,5 +49,19 @@ public class ProfileFragment extends Fragment {
         arrayListBan.add(new Ban(8,0));
 
         banAdapter.notifyDataSetChanged();
+    }
+    private void ActionClickGridView() {
+        gridViewBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Inflate the fragment
+                // chuyển qua fragment chi tiết bàn
+                DetailTableFragment fragment = new DetailTableFragment();
+                Bundle thongtinBan = new Bundle();
+                thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
+                fragment.setArguments(thongtinBan);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+            }
+        });
     }
 }

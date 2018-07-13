@@ -1,10 +1,12 @@
 package com.example.user.quancafe.activity.model;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 13/07/2018.
  */
 
-public class Ban {
+public class Ban implements Serializable {
     private int stt;
     private int trangthai;
 

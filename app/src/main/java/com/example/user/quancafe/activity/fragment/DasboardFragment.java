@@ -84,8 +84,7 @@ public class DasboardFragment extends Fragment {
         dialog.setCanceledOnTouchOutside(false);
 
         gridViewBan = dialog.findViewById(R.id.gridView_dsBan);
-        arrayListBan = new ArrayList<>();
-        banAdapter = new BanAdapter(getActivity(),arrayListBan);
+
 
         arrayListBan.add(new Ban(1,0));
         arrayListBan.add(new Ban(2,0));
@@ -102,9 +101,26 @@ public class DasboardFragment extends Fragment {
 
         gridViewBan.setAdapter(banAdapter);
 
+       ActionClickGridView(gridViewBan,dialog);
 
         dialog.show();
 
+    }
+
+    private void ActionClickGridView(final GridView gridViewBan, final Dialog dialog) {
+        gridViewBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Inflate the fragment
+                // chuyển qua fragment chi tiết bàn
+                DetailTableFragment fragment = new DetailTableFragment();
+                Bundle thongtinBan = new Bundle();
+                thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
+                fragment.setArguments(thongtinBan);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                dialog.dismiss();
+            }
+        });
     }
 
     // sự kiện nhấn lâu listView
@@ -176,6 +192,10 @@ public class DasboardFragment extends Fragment {
         btntieptucmua = (Button) view.findViewById(R.id.btnTieptucgiohang);
         giohangAdapter = new GiohangAdapter(MainActivity.mangGiohang, getActivity());
         listViewGioHang.setAdapter(giohangAdapter);
+
+        // ds bàn
+        arrayListBan = new ArrayList<>();
+        banAdapter = new BanAdapter(getActivity(),arrayListBan);
     }
 
     //tính tổng tiền
