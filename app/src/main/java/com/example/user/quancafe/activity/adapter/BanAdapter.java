@@ -65,10 +65,11 @@ public class BanAdapter extends BaseAdapter {
         Ban ban = (Ban) getItem(position);
         viewHolder.txtBan.setText("Bàn "+ban.getStt());
         if(ban.getTrangthai() !=0){
-
-        }else{
             // bàn đã đặt món
             viewHolder.imgBan.setBackgroundColor(Color.BLACK);
+        }else{
+            viewHolder.imgBan.setBackgroundColor(Color.WHITE);
+
         }
         //viewHolder.imgBan.setScaleType(ImageView.ScaleType.CENTER_CROP);
        // viewHolder.imgBan.setPadding(8, 8, 8, 8);

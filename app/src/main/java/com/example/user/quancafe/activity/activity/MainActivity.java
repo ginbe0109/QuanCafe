@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
             mangGiohang = new ArrayList<>();
         }
 
+
     }
 
 }

@@ -6,17 +6,46 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 import com.example.user.quancafe.R;
+import com.example.user.quancafe.activity.adapter.BanAdapter;
+import com.example.user.quancafe.activity.model.Ban;
+
+import java.util.ArrayList;
 
 /**
  * Created by User on 27/06/2018.
  */
 
 public class ProfileFragment extends Fragment {
+    private View view;
+    private GridView gridViewBan;
+    private BanAdapter banAdapter;
+    private ArrayList<Ban> arrayListBan;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile,null);
+        view = inflater.inflate(R.layout.fragment_profile,null);
+        AnhXa();
+        return view;
+    }
+
+    private void AnhXa() {
+        gridViewBan = view.findViewById(R.id.gridView_fragmentDSBan_Ban);
+        arrayListBan = new ArrayList<>();
+        banAdapter = new BanAdapter(getActivity(), arrayListBan);
+        gridViewBan.setAdapter(banAdapter);
+
+        arrayListBan.add(new Ban(1,0));
+        arrayListBan.add(new Ban(2,1));
+        arrayListBan.add(new Ban(3,1));
+        arrayListBan.add(new Ban(4,0));
+        arrayListBan.add(new Ban(5,0));
+        arrayListBan.add(new Ban(6,0));
+        arrayListBan.add(new Ban(7,0));
+        arrayListBan.add(new Ban(8,0));
+
+        banAdapter.notifyDataSetChanged();
     }
 }
