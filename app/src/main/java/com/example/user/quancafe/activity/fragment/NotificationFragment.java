@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Created by User on 27/06/2018.
  */
-
+// Danh sách món theo loại món
 public class NotificationFragment extends Fragment {
     private View view;
     private int idloai = 0;

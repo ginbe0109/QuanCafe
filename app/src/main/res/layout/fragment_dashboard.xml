@@ -78,7 +78,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/btnThanhtoangiohang"
-        android:text="Thanh toán giỏ hàng"
+        android:text="Đặt món"
         android:textSize="20sp"
 
         />
@@ -87,7 +87,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/btnTieptucgiohang"
-        android:text="Tiếp tục mua hàng"
+        android:text="Tiếp tục chọn món"
         android:textSize="20sp"
 
         />

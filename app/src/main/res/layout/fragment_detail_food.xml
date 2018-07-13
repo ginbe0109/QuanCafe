@@ -55,7 +55,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Thêm món vào menu"
+                android:text="Thêm món"
                 android:textSize="15sp"
                 android:id="@+id/buttonThemGioHang"
                 android:textColor="#ff0000"

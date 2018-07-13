@@ -231,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SendToLogIn() {
+        // thoát tài khoản
         LogInActivity.isLogin = false;
         Intent intent = new Intent(getApplicationContext(),LogInActivity.class);
         startActivity(intent);

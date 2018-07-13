@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="10"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vui lòng chọn bàn"
+            android:gravity="center"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.5"
+        >
+        <GridView
+            android:id="@+id/gridView_dsBan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:gravity="center"
+            android:horizontalSpacing="10dp"
+            android:verticalSpacing="10dp"
+            android:numColumns="4"
+            android:padding="10dp"
+            android:columnWidth="90dp"
+            android:stretchMode="columnWidth"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.user.quancafe.activity.fragment;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,16 +10,22 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.activity.MainActivity;
+import com.example.user.quancafe.activity.adapter.BanAdapter;
 import com.example.user.quancafe.activity.adapter.GiohangAdapter;
+import com.example.user.quancafe.activity.model.Ban;
+import com.example.user.quancafe.activity.ultil.CheckConnect;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Created by User on 27/06/2018.
@@ -31,6 +38,10 @@ public class DasboardFragment extends Fragment {
     static TextView txttongtiengioihang;
     Button btntieptucmua, btnthanhtoan;
     GiohangAdapter giohangAdapter;
+
+    GridView gridViewBan;
+    BanAdapter banAdapter;
+    ArrayList<Ban> arrayListBan;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,13 +69,42 @@ public class DasboardFragment extends Fragment {
             public void onClick(View v) {
                 // trong giỏ hàng có sản phẩm thì mới thanh toán
                 if(MainActivity.mangGiohang.size() > 0){
-//                    Intent intent = new Intent(getActivity(),Thongtinkhachhang.class);
-//                    startActivity(intent);
+                    DialogDatMon();
                 }else{
-                    //CheckConnection.ShowToast(getApplicationContext(),"Giỏ hàng của bạn chưa có sản phẩm");
+                    CheckConnect.ShowToast(getActivity(),"Giỏ hàng của bạn chưa có sản phẩm");
                 }
             }
         });
+    }
+
+    private void DialogDatMon() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_menu_ds_ban);
+        dialog.setCanceledOnTouchOutside(false);
+
+        gridViewBan = dialog.findViewById(R.id.gridView_dsBan);
+        arrayListBan = new ArrayList<>();
+        banAdapter = new BanAdapter(getActivity(),arrayListBan);
+
+        arrayListBan.add(new Ban(1,0));
+        arrayListBan.add(new Ban(2,0));
+        arrayListBan.add(new Ban(3,0));
+        arrayListBan.add(new Ban(4,1));
+        arrayListBan.add(new Ban(5,0));
+        arrayListBan.add(new Ban(6,0));
+        arrayListBan.add(new Ban(7,1));
+        arrayListBan.add(new Ban(8,1));
+        arrayListBan.add(new Ban(9,0));
+        arrayListBan.add(new Ban(10,0));
+        arrayListBan.add(new Ban(11,1));
+        banAdapter.notifyDataSetChanged();
+
+        gridViewBan.setAdapter(banAdapter);
+
+
+        dialog.show();
+
     }
 
     // sự kiện nhấn lâu listView
@@ -74,7 +114,7 @@ public class DasboardFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Xác nhận xóa sản phẩm");
-                builder.setMessage("Bạn có chắc xóa sản phẩm");
+                builder.setMessage("Bạn có chắc xóa sản phẩm đã chọn?");
                 builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
