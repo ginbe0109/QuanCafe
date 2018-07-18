@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,13 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.activity.LogInActivity;
@@ -36,7 +40,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.user.quancafe.activity.ultil.CheckConnect.ShowToast;
 
@@ -144,7 +153,7 @@ public class DasboardFragment extends Fragment {
     private void ActionClickGridView(final GridView gridViewBan, final Dialog dialog) {
         gridViewBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
                 //Inflate the fragment
                 // chuyển qua fragment chi tiết bàn
@@ -155,92 +164,100 @@ public class DasboardFragment extends Fragment {
 //                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
 //                dialog.dismiss();
 
-                CheckConnect.ShowToast(getActivity().getApplicationContext(), LogInActivity.mand +"");
+                // get current time
+                Date time = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                final String currenttime = df.format(time);
+                //CheckConnect.ShowToast(getActivity().getApplicationContext(), LogInActivity.mand +" "+currenttime);
 
-//                final Ban  ban = new Ban(arrayListBan.get(position).getStt(),1);
-//                final int sttban = ban.getStt();
-//                final int trangthai = ban.getTrangthai();
-//                    RequestQueue requsetQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-//                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanCapNhatBan, new Response.Listener<String>() {
-//                        @Override
-//                        public void onResponse(final String madonhang) {
-//                            Log.d("madonhang",madonhang);
-//                            // nếu có dữ liệu sẽ được gửi lên server
-//                            if(Integer.parseInt(madonhang) > 0){
-//                                // đảy dự liệu lên server
-//                                RequestQueue Queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-//                                StringRequest request = new StringRequest(Request.Method.POST, Server.DuongdanChitietdonhang, new Response.Listener<String>() {
-//                                    @Override
-//                                    public void onResponse(String response) {
-//                                        // nếu dữ liệu đã lên thành công thì trả về 1
-//                                        if(response.equals("1")){
-//                                            // làm sạch mảng gio hang
-//                                            MainActivity.mangGiohang.clear();
-//                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
-//                                            // chuyển màn hình đến MainActivity
-////                                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-////                                            startActivity(intent);
-////                                            CheckConnection.ShowToast(getApplicationContext(),"Mời bạn tiếp tục mua hàng");
-//                                        }else{
-//                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Dữ liệu giỏ hàng của bạn bị lỗi");
-//                                        }
-//                                    }
-//                                }, new Response.ErrorListener() {
-//                                    @Override
-//                                    public void onErrorResponse(VolleyError error) {
-//
-//                                    }
-//                                }){
-//                                    @Override
-//                                    protected Map<String, String> getParams() throws AuthFailureError {
-//                                        // tạo dư liệu và đổ vào JSONArray
-//                                        JSONArray jsonArray = new JSONArray();
-//                                        // đối với mỗi sản phẩm trong vỏ hàng thì chứa trong Object con
-//                                        for(int i=0; i<MainActivity.mangGiohang.size(); i++){
-//                                            JSONObject jsonObject = new JSONObject();
-//                                            try {
-//                                                // truyền dữ liệu vào trong Object
-//                                                jsonObject.put("mand",LogInActivity.mand);
-//                                                jsonObject.put("mamon",MainActivity.mangGiohang.get(i).getIdsp());
-//                                                jsonObject.put("sttban",ban.getStt());
-//                                                jsonObject.put("sohd",1);
-//                                                jsonObject.put("thoigian","2018-07-01 02:22:00");
-//                                                jsonObject.put("trangthai",0);
-//                                                jsonObject.put("soluong",MainActivity.mangGiohang.get(i).getSoluongsp());
-//
-//                                            } catch (JSONException e) {
-//                                                e.printStackTrace();
-//                                            }
-//
-//                                            // put(đưa) các jsonobject vào các jsonArray
-//                                            jsonArray.put(jsonObject);
-//                                        }
-//                                        // chuyển jsonArray thành dạng chuỗi để đưa lên server
-//                                        HashMap<String, String> param = new HashMap<String, String>();
-//                                        // gửi lên đoạn chuỗi jsonArray
-//                                        param.put("jsonChitietdonhang",jsonArray.toString());
-//
-//                                        return param;
-//                                    }
-//                                };
-//                                Queue.add(request);
-//                            }
-//                        }
-//                    }, new Response.ErrorListener() {
-//                        @Override
-//                        public void onErrorResponse(VolleyError error) {
-//
-//                        }
-//                    }){
-//                        @Override
-//                        protected Map<String, String> getParams() throws AuthFailureError {
-//                            HashMap<String, String> params = new HashMap<String, String>();
-//                            params.put("sttban",String.valueOf(sttban));
-//                            params.put("trangthai",String.valueOf(trangthai));
-//                            return params;
-//                        }
-//                    };
-//                    requsetQueue.add(stringRequest);
+                final Ban  ban = new Ban(arrayListBan.get(position).getStt(),1);
+                final int sttban = ban.getStt();
+                final int trangthai = ban.getTrangthai();
+                    RequestQueue requsetQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanCapNhatBan, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(final String madonhang) {
+                            Log.d("madonhang",madonhang);
+                            // nếu có dữ liệu sẽ được gửi lên server
+                            if(Integer.parseInt(madonhang) > 0){
+                                // đảy dự liệu lên server
+                                RequestQueue Queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                                StringRequest request = new StringRequest(Request.Method.POST, Server.DuongdanChitietdonhang, new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        // nếu dữ liệu đã lên thành công thì trả về 1
+                                        if(response.equals("1")){
+                                            // làm sạch mảng gio hang
+                                            MainActivity.mangGiohang.clear();
+                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
+
+                                            // chuyển qua fragment chi tiết bàn
+                                            DetailTableFragment fragment = new DetailTableFragment();
+                                            Bundle thongtinBan = new Bundle();
+                                            thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
+                                            fragment.setArguments(thongtinBan);
+                                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                                            dialog.dismiss();
+                                        }else{
+                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Dữ liệu giỏ hàng của bạn bị lỗi");
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+                                    }
+                                }){
+                                    @Override
+                                    protected Map<String, String> getParams() throws AuthFailureError {
+                                        // tạo dư liệu và đổ vào JSONArray
+                                        JSONArray jsonArray = new JSONArray();
+                                        // đối với mỗi sản phẩm trong vỏ hàng thì chứa trong Object con
+                                        for(int i=0; i<MainActivity.mangGiohang.size(); i++){
+                                            JSONObject jsonObject = new JSONObject();
+                                            try {
+                                                // truyền dữ liệu vào trong Object
+                                                jsonObject.put("mand", LogInActivity.mand);
+                                                jsonObject.put("mamon",MainActivity.mangGiohang.get(i).getIdsp());
+                                                jsonObject.put("sttban",ban.getStt());
+                                                jsonObject.put("sohd",1);
+                                                jsonObject.put("thoigian",currenttime);
+                                                jsonObject.put("trangthai",0);
+                                                jsonObject.put("soluong",MainActivity.mangGiohang.get(i).getSoluongsp());
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            // put(đưa) các jsonobject vào các jsonArray
+                                            jsonArray.put(jsonObject);
+                                        }
+                                        // chuyển jsonArray thành dạng chuỗi để đưa lên server
+                                        HashMap<String, String> param = new HashMap<String, String>();
+                                        // gửi lên đoạn chuỗi jsonArray
+                                        param.put("jsonChitietdonhang",jsonArray.toString());
+
+                                        return param;
+                                    }
+                                };
+                                Queue.add(request);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> params = new HashMap<String, String>();
+                            params.put("sttban",String.valueOf(sttban));
+                            params.put("trangthai",String.valueOf(trangthai));
+                            return params;
+                        }
+                    };
+                    requsetQueue.add(stringRequest);
                 }
         });
     }
