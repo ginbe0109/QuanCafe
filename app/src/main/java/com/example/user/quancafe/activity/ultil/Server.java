@@ -12,4 +12,7 @@ public class Server {
     public static String Duongdanloaimon = "http://" + localhost + "/Cafe/ConnectServerCafe/getloaimon.php";
     public static String urlMon = "http://" + localhost + "/Cafe/ConnectServerCafe/getmonan.php?page=";
     public static String Duongdandanhsachmontheoloai = "http://" + localhost + "/Cafe/ConnectServerCafe/getmonantheoloai.php?page=";
+    public static String DuongdanBan = "http://" + localhost + "/Cafe/ConnectServerCafe/getban.php";
+    public static String DuongdanCapNhatBan = "http://" + localhost + "/Cafe/ConnectServerCafe/updateban.php";
+    public static String DuongdanChitietdonhang = "http://" + localhost + "/Cafe/ConnectServerCafe/chitietdonhang.php";
 }

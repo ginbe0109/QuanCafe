@@ -74,7 +74,11 @@ public class MainActivity extends AppCompatActivity {
         ActionNavigationBottom();
         SetUpBottomNavigationCounter(2);
 
+       // CheckConnect.ShowToast(getApplicationContext(),LogInActivity.mand+" main");
+
+
     }
+
 
     private void SetUpBottomNavigationCounter(int count) {
         BottomNavigationMenuView bottomNavigationMenuView =
@@ -290,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
         listViewMenu.setVisibility(View.VISIBLE);
         imageViewMenu.setVisibility(View.INVISIBLE);
         imageViewCauHinh.setVisibility(View.VISIBLE);
+       // CheckConnect.ShowToast(getApplicationContext(), LogInActivity.mand +"");
 
 
 

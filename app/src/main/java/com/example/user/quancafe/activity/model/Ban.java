@@ -15,6 +15,9 @@ public class Ban implements Serializable {
         this.trangthai = trangthai;
     }
 
+    public Ban() {
+    }
+
     public int getStt() {
         return stt;
     }

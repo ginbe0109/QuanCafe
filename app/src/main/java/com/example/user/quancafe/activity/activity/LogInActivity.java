@@ -34,7 +34,7 @@ public class LogInActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
 
-    private static final String PREFS_NAME = "preferences";
+    public static final String PREFS_NAME = "preferences";
     private static final String PREF_UNAME = "Username";
     private static final String PREF_PASSWORD = "Password";
     //private static final String PREF_ISLOGIN = "Login";
@@ -47,6 +47,7 @@ public class LogInActivity extends AppCompatActivity {
 
     //private final boolean DefaultLogin = false;
     public static boolean isLogin = false;
+    public static int mand = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,8 @@ public class LogInActivity extends AppCompatActivity {
 
         // Lấy trạng thại đã lưu
         boolean wasLogin = settings.getBoolean("wasLogin",false);
+        // Lấy trạng thại đã lưu
+        LogInActivity.mand = settings.getInt("mand",0);
         if (wasLogin == true){
             sendToMain();
         }
@@ -104,6 +107,7 @@ public class LogInActivity extends AppCompatActivity {
         editor.putString(PREF_PASSWORD, PasswordValue);
         // lưu lại trạng thái đã đăng nhập
         editor.putBoolean("wasLogin",wasLogin);
+        editor.putInt("mand",mand);
         editor.commit();
 
     }
@@ -154,6 +158,7 @@ public class LogInActivity extends AppCompatActivity {
                     if(jsonObject.getInt("success") == 1){
                         isLogin = true;
                         message = jsonObject.getString("message");
+                        mand = jsonObject.getInt("mand");
                         CheckConnect.ShowToast(getApplicationContext(),message);
                         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                         startActivity(intent);

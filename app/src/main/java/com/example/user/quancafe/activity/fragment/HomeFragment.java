@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment {
                 noti.setArguments(idloai);
 
                 //Inflate the fragment
-                getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
                 //CheckConnect.ShowToast(getContext(), String.valueOf(arrayLoaiMon.get(position).getIdloai()));
 
 //                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
