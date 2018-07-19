@@ -15,4 +15,5 @@ public class Server {
     public static String DuongdanBan = "http://" + localhost + "/Cafe/ConnectServerCafe/getban.php";
     public static String DuongdanCapNhatBan = "http://" + localhost + "/Cafe/ConnectServerCafe/updateban.php";
     public static String DuongdanChitietdonhang = "http://" + localhost + "/Cafe/ConnectServerCafe/chitietdonhang.php";
+    public static String DuongdanThemHoaDon = "http://" + localhost + "/Cafe/ConnectServerCafe/themhoadon.php";
 }
