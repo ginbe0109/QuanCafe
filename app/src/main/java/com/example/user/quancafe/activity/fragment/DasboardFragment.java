@@ -152,52 +152,14 @@ public class DasboardFragment extends Fragment {
         requestQueue.add(arrRequest);
     }
 
-//    private int insertTriGiaHoadon(final float trigia){
-
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanThemHoaDon, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String stthd) {
-//                 stthdon = Integer.parseInt(stthd);
-//                CheckConnect.ShowToast(getActivity(),stthdon+"");
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                HashMap<String, String> params = new HashMap<String, String>();
-//                params.put("trigia",String.valueOf(trigia));
-//                return params;
-//            }
-//        };
-//
-//        requestQueue.add(stringRequest);
-
-//    }
 
     private void ActionClickGridView(final GridView gridViewBan, final Dialog dialog) {
         gridViewBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                //Inflate the fragment
-                // chuyển qua fragment chi tiết bàn
-//                DetailTableFragment fragment = new DetailTableFragment();
-//                Bundle thongtinBan = new Bundle();
-//                thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
-//                fragment.setArguments(thongtinBan);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
-//                dialog.dismiss();
-
-
                 // nếu bàn trống thì tạo hóa đơn mới
-                // ngược lại không tạo
+                // ngược lại không tạo hóa đơn mới. lấy id hóa đơn chưa thanh toán của từng bàn
                 if(arrayListBan.get(position).getTrangthai() == 0){
                     CheckConnect.ShowToast(getActivity(),"bàn trống");
                     // tạo hóa đơn
@@ -207,6 +169,9 @@ public class DasboardFragment extends Fragment {
                         public void onResponse(String stthd) {
                             // số thứ tự hóa đơn
                             stthdon = Integer.parseInt(stthd);
+                            // nếu thêm hóa đơn thành công
+                            // thêm ds món vào ds ct_dm
+                            // cập nhật trạng thái của bàn
                             if (stthdon > 0){
                                 // get current time
                                 Date time = Calendar.getInstance().getTime();
@@ -327,6 +292,137 @@ public class DasboardFragment extends Fragment {
                     requestQueueHoaDon.add(stringRequestHoaDon);
                 }else{
                     CheckConnect.ShowToast(getActivity(),"có người");
+                    RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            String mahd = "";
+                            if (response !=null){
+                                try {
+
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    mahd = jsonObject.getString("mahd");
+                                    stthdon = Integer.parseInt(mahd);
+                                    CheckConnect.ShowToast(getActivity(),stthdon+"");
+                                    // get current time
+                                    Date time = Calendar.getInstance().getTime();
+                                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    final String currenttime = df.format(time);
+                                    //CheckConnect.ShowToast(getActivity().getApplicationContext(), LogInActivity.mand +" "+currenttime);
+
+                                    final Ban  ban = new Ban(arrayListBan.get(position).getStt(),1);
+                                    final int sttban = ban.getStt();
+                                    final int trangthai = ban.getTrangthai();
+                                    // update trạng thái của bàn
+                                    RequestQueue requsetQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanCapNhatBan, new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(final String madonhang) {
+                                            Log.d("madonhang",madonhang);
+                                            // nếu có dữ liệu sẽ được gửi lên server
+                                            if(Integer.parseInt(madonhang) > 0){
+                                                // đảy dự liệu lên server
+                                                // thêm ds món trong giỏ hàng lên server
+                                                RequestQueue Queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                                                StringRequest request = new StringRequest(Request.Method.POST, Server.DuongdanChitietdonhang, new Response.Listener<String>() {
+                                                    @Override
+                                                    public void onResponse(String response) {
+                                                        // nếu dữ liệu đã lên thành công thì trả về 1
+                                                        if(response.equals("1")){
+                                                            // làm sạch mảng gio hang
+                                                            MainActivity.mangGiohang.clear();
+                                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
+
+                                                            // chuyển qua fragment chi tiết bàn
+                                                            DetailTableFragment fragment = new DetailTableFragment();
+                                                            Bundle thongtinBan = new Bundle();
+                                                            thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
+                                                            fragment.setArguments(thongtinBan);
+                                                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                                                            dialog.dismiss();
+                                                        }else{
+                                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Dữ liệu giỏ hàng của bạn bị lỗi");
+                                                        }
+                                                    }
+                                                }, new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+
+                                                    }
+                                                }){
+                                                    @Override
+                                                    protected Map<String, String> getParams() throws AuthFailureError {
+                                                        // tạo dư liệu và đổ vào JSONArray
+                                                        JSONArray jsonArray = new JSONArray();
+                                                        // đối với mỗi sản phẩm trong vỏ hàng thì chứa trong Object con
+                                                        for(int i=0; i<MainActivity.mangGiohang.size(); i++){
+                                                            JSONObject jsonObject = new JSONObject();
+                                                            try {
+                                                                // truyền dữ liệu vào trong Object
+                                                                jsonObject.put("mand", LogInActivity.mand);
+                                                                jsonObject.put("mamon",MainActivity.mangGiohang.get(i).getIdsp());
+                                                                jsonObject.put("sttban",ban.getStt());
+                                                                jsonObject.put("sohd",stthdon);
+                                                                jsonObject.put("thoigian",currenttime);
+                                                                jsonObject.put("trangthai",0);
+                                                                jsonObject.put("soluong",MainActivity.mangGiohang.get(i).getSoluongsp());
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                            // put(đưa) các jsonobject vào các jsonArray
+                                                            jsonArray.put(jsonObject);
+                                                        }
+                                                        // chuyển jsonArray thành dạng chuỗi để đưa lên server
+                                                        HashMap<String, String> param = new HashMap<String, String>();
+                                                        // gửi lên đoạn chuỗi jsonArray
+                                                        param.put("jsonChitietdonhang",jsonArray.toString());
+
+                                                        return param;
+                                                    }
+                                                };
+                                                Queue.add(request);
+                                            }
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+
+                                        }
+                                    }){
+                                        @Override
+                                        protected Map<String, String> getParams() throws AuthFailureError {
+                                            HashMap<String, String> params = new HashMap<String, String>();
+                                            params.put("sttban",String.valueOf(sttban));
+                                            params.put("trangthai",String.valueOf(trangthai));
+                                            return params;
+                                        }
+                                    };
+                                    requsetQueue.add(stringRequest);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> params = new HashMap<String, String>();
+                            params.put("THANHTOAN",String.valueOf(0));
+                            params.put("TRANGTHAIBAN",String.valueOf(arrayListBan.get(position).getTrangthai()));
+                            params.put("STTBAN",String.valueOf(arrayListBan.get(position).getStt()));
+                            return params;
+                        }
+                    };
+
+                    requestQueueIDhoadon.add(stringRequestIDhoadon);
                 }
 
 
