@@ -36,6 +36,7 @@ public class ProfileFragment extends Fragment {
     private GridView gridViewBan;
     private BanAdapter banAdapter;
     private ArrayList<Ban> arrayListBan;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class ProfileFragment extends Fragment {
         // get danh sách bàn
         GetDataBan();
         ActionClickGridView();
+
         return view;
     }
 

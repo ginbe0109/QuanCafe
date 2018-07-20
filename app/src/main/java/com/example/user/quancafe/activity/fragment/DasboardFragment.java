@@ -159,7 +159,7 @@ public class DasboardFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
                 // nếu bàn trống thì tạo hóa đơn mới
-                // ngược lại không tạo hóa đơn mới. lấy id hóa đơn chưa thanh toán của từng bàn
+                // ngược lại không tạo hóa đơn mới. lấy id hóa đơn chưa thanh toán của từng bàn và cập trị giá của hóa đơn
                 if(arrayListBan.get(position).getTrangthai() == 0){
                     CheckConnect.ShowToast(getActivity(),"bàn trống");
                     // tạo hóa đơn
@@ -304,7 +304,7 @@ public class DasboardFragment extends Fragment {
                                     // get mã hóa đơn khi bàn chưa thanh toán
                                     mahd = jsonObject.getString("mahd");
                                     stthdon = Integer.parseInt(mahd);
-                                    CheckConnect.ShowToast(getActivity(),stthdon+"");
+                                    //CheckConnect.ShowToast(getActivity(),stthdon+"");
                                     // get current time
                                     Date time = Calendar.getInstance().getTime();
                                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -318,10 +318,10 @@ public class DasboardFragment extends Fragment {
                                     RequestQueue requsetQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
                                     StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanCapNhatBan, new Response.Listener<String>() {
                                         @Override
-                                        public void onResponse(final String madonhang) {
-                                            Log.d("madonhang",madonhang);
-                                            // nếu có dữ liệu sẽ được gửi lên server
-                                            if(Integer.parseInt(madonhang) > 0){
+                                        public void onResponse(final String response) {
+                                            Log.d("madonhang",response);
+                                            // nếu đẩy dữ liệu thành cônng thì hêm ds món trong giỏ hàng lên server
+                                            if(Integer.parseInt(response) > 0){
                                                 // đảy dự liệu lên server
                                                 // thêm ds món trong giỏ hàng lên server
                                                 RequestQueue Queue = Volley.newRequestQueue(getActivity().getApplicationContext());
@@ -333,6 +333,9 @@ public class DasboardFragment extends Fragment {
                                                             // làm sạch mảng gio hang
                                                             MainActivity.mangGiohang.clear();
                                                             CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
+
+
+
                                                             //// Cập nhật hóa đơn sau thi thêm món ăn vào
                                                             UpDateHoaDon(stthdon);
 
