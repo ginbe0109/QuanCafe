@@ -9,11 +9,23 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.adapter.BanAdapter;
 import com.example.user.quancafe.activity.model.Ban;
+import com.example.user.quancafe.activity.ultil.Server;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static com.example.user.quancafe.activity.ultil.CheckConnect.ShowToast;
 
 /**
  * Created by User on 27/06/2018.
@@ -29,6 +41,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile,null);
         AnhXa();
+        // get danh sách bàn
+        GetDataBan();
         ActionClickGridView();
         return view;
     }
@@ -38,18 +52,40 @@ public class ProfileFragment extends Fragment {
         arrayListBan = new ArrayList<>();
         banAdapter = new BanAdapter(getActivity(), arrayListBan);
         gridViewBan.setAdapter(banAdapter);
-
-        arrayListBan.add(new Ban(1,0));
-        arrayListBan.add(new Ban(2,1));
-        arrayListBan.add(new Ban(3,1));
-        arrayListBan.add(new Ban(4,0));
-        arrayListBan.add(new Ban(5,0));
-        arrayListBan.add(new Ban(6,0));
-        arrayListBan.add(new Ban(7,0));
-        arrayListBan.add(new Ban(8,0));
-
-        banAdapter.notifyDataSetChanged();
     }
+    private void GetDataBan() {
+        final RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        JsonArrayRequest arrRequest = new JsonArrayRequest(Server.DuongdanBan, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                // nếu mảng không rỗng
+                if(response != null){
+                    int sttban = 0;
+                    int trangthai = 0;
+                    // lấy từ phần tử object của mảng gán vào adapter
+                    for(int i = 0; i < response.length(); i++){
+                        try{
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            sttban = jsonObject.getInt("sttban");
+                            trangthai = jsonObject.getInt("trangthai");
+                            arrayListBan.add(new Ban(sttban,trangthai));
+                            banAdapter.notifyDataSetChanged();
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ShowToast(getActivity(),"Vui lòng kiểm tra kết nối");
+            }
+        });
+        requestQueue.add(arrRequest);
+    }
+
     private void ActionClickGridView() {
         gridViewBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -301,6 +301,7 @@ public class DasboardFragment extends Fragment {
                                 try {
 
                                     JSONObject jsonObject = new JSONObject(response);
+                                    // get mã hóa đơn khi bàn chưa thanh toán
                                     mahd = jsonObject.getString("mahd");
                                     stthdon = Integer.parseInt(mahd);
                                     CheckConnect.ShowToast(getActivity(),stthdon+"");
@@ -309,7 +310,7 @@ public class DasboardFragment extends Fragment {
                                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                     final String currenttime = df.format(time);
                                     //CheckConnect.ShowToast(getActivity().getApplicationContext(), LogInActivity.mand +" "+currenttime);
-
+                                    // đặt trạng thái bàn có người
                                     final Ban  ban = new Ban(arrayListBan.get(position).getStt(),1);
                                     final int sttban = ban.getStt();
                                     final int trangthai = ban.getTrangthai();
@@ -332,8 +333,11 @@ public class DasboardFragment extends Fragment {
                                                             // làm sạch mảng gio hang
                                                             MainActivity.mangGiohang.clear();
                                                             CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
+                                                            //// Cập nhật hóa đơn sau thi thêm món ăn vào
+                                                            UpDateHoaDon(stthdon);
 
-                                                            // chuyển qua fragment chi tiết bàn
+
+                                                            //// chuyển qua fragment chi tiết bàn
                                                             DetailTableFragment fragment = new DetailTableFragment();
                                                             Bundle thongtinBan = new Bundle();
                                                             thongtinBan.putSerializable("thongtinban", arrayListBan.get(position));
@@ -415,7 +419,9 @@ public class DasboardFragment extends Fragment {
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             HashMap<String, String> params = new HashMap<String, String>();
+                            // bàn chưa thanh toán
                             params.put("THANHTOAN",String.valueOf(0));
+                            // trạng thái bàn
                             params.put("TRANGTHAIBAN",String.valueOf(arrayListBan.get(position).getTrangthai()));
                             params.put("STTBAN",String.valueOf(arrayListBan.get(position).getStt()));
                             return params;
@@ -429,6 +435,32 @@ public class DasboardFragment extends Fragment {
 
             }
         });
+    }
+
+    private void UpDateHoaDon(final int stthdon) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdangCapNhatHoaDon, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                // bàn chưa thanh toán
+                params.put("SOHD",String.valueOf(stthdon));
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+
     }
 
     // sự kiện nhấn lâu listView
