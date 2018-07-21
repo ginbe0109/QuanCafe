@@ -1,6 +1,7 @@
 package com.example.user.quancafe.activity.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.model.MonAn;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -69,11 +71,13 @@ public class DanhSachMonAnAdapter extends BaseAdapter {
         // gán dữ liệu lên layout
         viewHolder.textViewTenMon.setText(monan.getTenMon());
         // tạo mô tả gồm 2 dòng
-        viewHolder.textViewMoTa.setMaxLines(2);
+//        viewHolder.textViewMoTa.setMaxLines(2);
         // mô tả quá dài thì được thay bằng 3 chấm
         viewHolder.textViewTenMon.setEllipsize(TextUtils.TruncateAt.END);
         // gán dữ liệu cho mô tả
-        viewHolder.textViewMoTa.setText(monan.getMotaMon());
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+        viewHolder.textViewMoTa.setText(decimalFormat.format(monan.getDongia())+ " Đ");
+        viewHolder.textViewMoTa.setTextColor(Color.RED);
         Picasso.with(context).load(monan.getHinhMon())
                 .placeholder(R.drawable.no_image_available)
                 .error(R.drawable.err)

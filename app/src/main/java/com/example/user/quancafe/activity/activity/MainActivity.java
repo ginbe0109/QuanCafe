@@ -24,7 +24,7 @@ import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.adapter.MenuAdapter;
 import com.example.user.quancafe.activity.fragment.DasboardFragment;
 import com.example.user.quancafe.activity.fragment.HomeFragment;
-import com.example.user.quancafe.activity.fragment.NotificationFragment;
+import com.example.user.quancafe.activity.fragment.ListFoodFragment;
 import com.example.user.quancafe.activity.fragment.ProfileFragment;
 import com.example.user.quancafe.activity.model.Giohang;
 import com.example.user.quancafe.activity.model.Menu;
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentMain = new DasboardFragment();
                         break;
                     case R.id.navigation_notifiaction:
-                        fragmentMain = new NotificationFragment();
+                        fragmentMain = new ListFoodFragment();
                         break;
                     case R.id.navigation_profile:
                         fragmentMain = new ProfileFragment();

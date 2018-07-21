@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.user.quancafe.R;
+import com.example.user.quancafe.activity.fragment.DetailTableFragment;
 import com.example.user.quancafe.activity.model.Giohang;
 import com.squareup.picasso.Picasso;
 
@@ -45,14 +46,14 @@ public class ChiTietBanAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
-    public class ViewHolder{
+    public static class ViewHolder{
         public ImageView imageViewGioHangCTBAN;
         public TextView textViewTenGoiHangCTBAN, textViewGiaGioHangCTBAN;
         public Button btnminusCTBAN, btnvaluesCTBAN, btnplusCTBAN;
 
     }
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
         if(convertView == null){
             viewHolder = new ViewHolder();
@@ -91,6 +92,84 @@ public class ChiTietBanAdapter extends BaseAdapter {
             viewHolder.btnplusCTBAN.setVisibility(View.VISIBLE);
         }
 
+         //xét sự kiện cho actuon plus
+        final ViewHolder finalViewHolder = viewHolder;
+        viewHolder.btnplusCTBAN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int slmoinhat = Integer.parseInt(finalViewHolder.btnvaluesCTBAN.getText().toString())+1;
+               // finalViewHolder.btnvaluesCTBAN.setText(slmoinhat+"");
+                //số lượng hiện tại
+                int slht = arrayGioHangCTBAN.get(position).getSoluongsp();
+                // giá hiện tại
+                long giaht = arrayGioHangCTBAN.get(position).getGiasp();
+                long giamoinhat = (giaht * slmoinhat) / slht;
+                // set lại giá và số lượng sản phẩm của giỏ hàng
+                arrayGioHangCTBAN.get(position).setGiasp(giamoinhat);
+                arrayGioHangCTBAN.get(position).setSoluongsp(slmoinhat);
+                DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+                finalViewHolder.textViewGiaGioHangCTBAN.setText(decimalFormat.format(giamoinhat)+ " Đ");
+                // update lại tổng tiền của giỏ hàng
+                EvenUtilChiTietBan();
+                // bắt sự kiện số lượng là 10 (chọn 10 lần cái sản phẩm)
+                // slmoinhat > 9 vì mỗi lần click đã cộng thêm 1 nên lần thứ 9 số lượng là
+                if(slmoinhat > 9){
+                    finalViewHolder.btnplusCTBAN.setVisibility(View.INVISIBLE);
+                    finalViewHolder.btnminusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
+
+                }else{
+                    finalViewHolder.btnplusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnminusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
+                }
+
+            }
+        });
+        viewHolder.btnminusCTBAN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int slmoinhat = Integer.parseInt(finalViewHolder.btnvaluesCTBAN.getText().toString())-1;
+                // finalViewHolder.btnvaluesCTBAN.setText(slmoinhat+"");
+                //số lượng hiện tại
+                int slht = arrayGioHangCTBAN.get(position).getSoluongsp();
+                // giá hiện tại
+                long giaht = arrayGioHangCTBAN.get(position).getGiasp();
+                long giamoinhat = (giaht * slmoinhat) / slht;
+                // set lại giá và số lượng sản phẩm của giỏ hàng
+                arrayGioHangCTBAN.get(position).setGiasp(giamoinhat);
+                arrayGioHangCTBAN.get(position).setSoluongsp(slmoinhat);
+                DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+                finalViewHolder.textViewGiaGioHangCTBAN.setText(decimalFormat.format(giamoinhat)+ " Đ");
+                // update lại tổng tiền của giỏ hàng
+                EvenUtilChiTietBan();
+                // bắt sự kiện số lượng là 10 (chọn 10 lần cái sản phẩm)
+                // slmoinhat > 9 vì mỗi lần click đã cộng thêm 1 nên lần thứ 9 số lượng là
+                if(slmoinhat < 2){
+                    finalViewHolder.btnplusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnminusCTBAN.setVisibility(View.INVISIBLE);
+                    finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
+
+                }else{
+                    finalViewHolder.btnplusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnminusCTBAN.setVisibility(View.VISIBLE);
+                    finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
+                }
+            }
+        });
+
         return convertView;
     }
+    //tính tổng tiền
+    private void EvenUtilChiTietBan() {
+        long tongtien = 0;
+        for(int i = 0; i< arrayGioHangCTBAN.size(); i++){
+            tongtien += (arrayGioHangCTBAN.get(i).getGiasp());
+        }
+        // định dạng lại tổng tiền
+        DecimalFormat decimal = new DecimalFormat("###,###,###");
+        DetailTableFragment.tongtienCTBAN.setText(decimal.format(tongtien)+" Đ");
+
+    }
+
 }
