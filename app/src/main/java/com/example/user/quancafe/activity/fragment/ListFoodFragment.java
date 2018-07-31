@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -116,12 +118,20 @@ public class ListFoodFragment extends Fragment {
     }
     public void xacNhanThemMon(final MonAn monAn){
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        alert.setTitle("XÁC NHẬN THÊM");
+        alert.setTitle("SỐ LƯỢNG");
         alert.setIcon(R.mipmap.ic_launcher);
-        alert.setMessage("Bạn có muốn thêm món?");
-        alert.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+        alert.setMessage("Số lượng sảm phẩm?");
+        final Spinner spinnerChiTiet = new Spinner(getActivity());
+        Integer[] soluong = new Integer[]{1,2,3,4,5,6,7,8,9,10};
+        ArrayAdapter<Integer> adapterSpinner = new ArrayAdapter<Integer>(getActivity(), android.R.layout.simple_dropdown_item_1line, soluong);
+        spinnerChiTiet.setAdapter(adapterSpinner);
+        alert.setView(spinnerChiTiet);
+        alert.setPositiveButton("Đặt", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                // số lượng
+                final int soluong = Integer.parseInt(spinnerChiTiet.getSelectedItem().toString());
+                //CheckConnect.ShowToast(getActivity(),soluong+"");
                 /// get current time
                 Date time = Calendar.getInstance().getTime();
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -168,13 +178,13 @@ public class ListFoodFragment extends Fragment {
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     // chuyển jsonArray thành dạng chuỗi để đưa lên server
                                     HashMap<String, String> param = new HashMap<String, String>();
-                                    param.put("mand",LogInActivity.mand+"");
+                                    param.put("mand", LogInActivity.mand+"");
                                     param.put("mamon",monAn.getMaMon()+"");
                                     param.put("sttban",ban.getStt()+"");
                                     param.put("sohd",idhoadon+"");
                                     param.put("thoigian",currenttime);
                                     param.put("trangthai",0+"");
-                                    param.put("soluong",1+"");
+                                    param.put("soluong",soluong+"");
                                     return param;
                                 }
                             };

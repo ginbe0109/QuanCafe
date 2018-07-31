@@ -21,7 +21,6 @@ import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.adapter.ChiTietBanAdapter;
 import com.example.user.quancafe.activity.model.Ban;
 import com.example.user.quancafe.activity.model.Giohang;
-import com.example.user.quancafe.activity.ultil.CheckConnect;
 import com.example.user.quancafe.activity.ultil.Server;
 
 import org.json.JSONArray;
@@ -81,7 +80,7 @@ public class DetailTableFragment extends Fragment {
                 if (ban.getTrangthai() != 0){
                     // bàn có người
                     // lấy hóa đơn cũ
-                    CheckConnect.ShowToast(getActivity(),"Có người");
+                   // CheckConnect.ShowToast(getActivity(),"Có người");
                     RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
                     StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
                         @Override
@@ -132,7 +131,7 @@ public class DetailTableFragment extends Fragment {
                     requestQueueIDhoadon.add(stringRequestIDhoadon);
                 }else{
                     // bàn không có người thì tạo hóa đơn mới
-                    CheckConnect.ShowToast(getActivity(),"không có người");
+                    //CheckConnect.ShowToast(getActivity(),"không có người");
                     // tạo hóa đơn mới
                     RequestQueue requestQueueHoaDon = Volley.newRequestQueue(getActivity().getApplicationContext());
                     StringRequest stringRequestHoaDon = new StringRequest(Request.Method.POST, Server.DuongdanThemHoaDon, new Response.Listener<String>() {
