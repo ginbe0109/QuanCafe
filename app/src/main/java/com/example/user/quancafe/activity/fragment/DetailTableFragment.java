@@ -98,6 +98,7 @@ public class DetailTableFragment extends Fragment {
 
                                     ListFoodFragment noti = new ListFoodFragment();
                                     Bundle thongtinMon = new Bundle();
+                                    thongtinMon.putInt("sttban",ban.getStt());
                                     thongtinMon.putInt("stthoadon", stthdon);
                                     noti.setArguments(thongtinMon);
                                     //Inflate the fragment
@@ -132,6 +133,38 @@ public class DetailTableFragment extends Fragment {
                 }else{
                     // bàn không có người thì tạo hóa đơn mới
                     CheckConnect.ShowToast(getActivity(),"không có người");
+                    // tạo hóa đơn mới
+                    RequestQueue requestQueueHoaDon = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    StringRequest stringRequestHoaDon = new StringRequest(Request.Method.POST, Server.DuongdanThemHoaDon, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            stthdon = Integer.parseInt(response);
+                            if(stthdon > 0){
+                                ListFoodFragment noti = new ListFoodFragment();
+                                Bundle thongtinMon = new Bundle();
+                                thongtinMon.putInt("sttban",ban.getStt());
+                                thongtinMon.putInt("stthoadon", stthdon);
+                                noti.setArguments(thongtinMon);
+                                //Inflate the fragment
+                                getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
+
+
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> params = new HashMap<String, String>();
+                            params.put("trigia",String.valueOf(0));
+                            return params;
+                        }
+                    };
+                    requestQueueHoaDon.add(stringRequestHoaDon);
                 }
 
 

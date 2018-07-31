@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,7 +22,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.quancafe.R;
+import com.example.user.quancafe.activity.activity.LogInActivity;
 import com.example.user.quancafe.activity.adapter.DanhSachMonAnAdapter;
+import com.example.user.quancafe.activity.model.Ban;
 import com.example.user.quancafe.activity.model.MonAn;
 import com.example.user.quancafe.activity.ultil.CheckConnect;
 import com.example.user.quancafe.activity.ultil.Server;
@@ -30,7 +33,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by User on 21/07/2018.
@@ -51,6 +59,7 @@ public class ListFoodFragment extends Fragment {
     private mHandler mHandler;
     private Bundle bundle;
     private int idhoadon = 0;
+    private int sttban = 0;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,6 +76,7 @@ public class ListFoodFragment extends Fragment {
             // Danh sách món ăn theo từng loại
             // lấy id loại
             idhoadon = bundle.getInt("stthoadon");
+            sttban = bundle.getInt("sttban");
             ActionListMonAnThem();
 
         }else{
@@ -112,8 +122,86 @@ public class ListFoodFragment extends Fragment {
         alert.setPositiveButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                CheckConnect.ShowToast(getActivity(), "id hoa don "+idhoadon+" ma mon "+monAn.getMaMon());
-                //CheckConnect.ShowToast(getActivity(),idhoadon+"hd");
+                /// get current time
+                Date time = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                final String currenttime = df.format(time);
+                final Ban ban = new Ban(sttban,1);
+                final int sttban = ban.getStt();
+                final int trangthai = ban.getTrangthai();
+                //update trạng thái bàn
+                RequestQueue requsetQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanCapNhatBan, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // nếu đẩy dữ liệu thành cônng thì hêm ds món trong giỏ hàng lên server
+                        if (Integer.parseInt(response) > 0){
+                            // đảy dự liệu lên server
+                            // thêm ds món trong giỏ hàng lên server
+                            RequestQueue Queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                            StringRequest request = new StringRequest(Request.Method.POST, Server.DuongdanThemMon, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    if (response.equals("1")){
+
+                                        //// Cập nhật hóa đơn sau thi thêm món ăn vào
+                                        UpDateHoaDon(idhoadon);
+                                        //Inflate the fragment
+                                        // chuyển qua fragment chi tiết bàn
+                                        DetailTableFragment fragment = new DetailTableFragment();
+                                        Bundle thongtinBan = new Bundle();
+                                        thongtinBan.putSerializable("thongtinban", ban);
+                                        fragment.setArguments(thongtinBan);
+                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                                    }else{
+                                        CheckConnect.ShowToast(getActivity().getApplicationContext(),"Thêm món không thành công");
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                }
+                            }){
+                                @Override
+                                protected Map<String, String> getParams() throws AuthFailureError {
+                                    // chuyển jsonArray thành dạng chuỗi để đưa lên server
+                                    HashMap<String, String> param = new HashMap<String, String>();
+                                    param.put("mand",LogInActivity.mand+"");
+                                    param.put("mamon",monAn.getMaMon()+"");
+                                    param.put("sttban",ban.getStt()+"");
+                                    param.put("sohd",idhoadon+"");
+                                    param.put("thoigian",currenttime);
+                                    param.put("trangthai",0+"");
+                                    param.put("soluong",1+"");
+                                    return param;
+                                }
+                            };
+
+                                 Queue.add(request);
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        HashMap<String, String> params = new HashMap<String, String>();
+                        params.put("sttban",String.valueOf(sttban));
+                        params.put("trangthai",String.valueOf(trangthai));
+                        return params;
+                    }
+                };
+                requsetQueue.add(stringRequest);
+
+
+                //CheckConnect.ShowToast(getActivity(), currenttime+" "+"id hoa don "+idhoadon+" ma mon "+monAn.getMaMon()+" sttban"+sttban+" nguoi"+ LogInActivity.mand);
+
 
             }
         });
@@ -124,6 +212,31 @@ public class ListFoodFragment extends Fragment {
             }
         });
         alert.show();
+
+    }
+    private void UpDateHoaDon(final int stthdon) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdangCapNhatHoaDon, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                // bàn chưa thanh toán
+                params.put("SOHD",String.valueOf(stthdon));
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
 
     }
 
