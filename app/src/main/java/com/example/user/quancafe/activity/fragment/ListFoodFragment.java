@@ -215,7 +215,7 @@ public class ListFoodFragment extends Fragment {
 
             }
         });
-        alert.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Trở về", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 

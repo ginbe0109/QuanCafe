@@ -21,6 +21,7 @@ import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.adapter.ChiTietBanAdapter;
 import com.example.user.quancafe.activity.model.Ban;
 import com.example.user.quancafe.activity.model.Giohang;
+import com.example.user.quancafe.activity.ultil.CheckConnect;
 import com.example.user.quancafe.activity.ultil.Server;
 
 import org.json.JSONArray;
@@ -173,6 +174,88 @@ public class DetailTableFragment extends Fragment {
             @Override
             public void onClick(View v) {
                // CheckConnect.ShowToast(getActivity(),"hai");
+                if(ban.getTrangthai() != 0){
+                    RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
+                    StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            String mahd = "";
+                            if (response !=null){
+                                try {
+
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    // get mã hóa đơn khi bàn chưa thanh toán
+                                    mahd = jsonObject.getString("mahd");
+                                    stthdon = Integer.parseInt(mahd);
+                                    //CheckConnect.ShowToast(getActivity(),stthdon+"");
+                                    // cập nhật trang thái hóa đơn
+                                    final RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdangCapNhatTrangThaiHoaDon, new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (response.equals("1")){
+                                                DetailTableFragment fragment = new DetailTableFragment();
+                                                Bundle thongtinBan = new Bundle();
+                                                thongtinBan.putSerializable("thongtinban", ban);
+                                                fragment.setArguments(thongtinBan);
+                                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                                                CheckConnect.ShowToast(getActivity(), "Thanh toán thành công");
+
+                                            }else{
+                                                CheckConnect.ShowToast(getActivity(), "Thanh toán không thành công");
+                                            }
+
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+
+                                        }
+                                    }){
+                                        @Override
+                                        protected Map<String, String> getParams() throws AuthFailureError {
+                                            HashMap<String, String> params = new HashMap<String, String>();
+                                            params.put("SOHD",stthdon+"");
+                                            params.put("STTBAN",ban.getStt()+"");
+                                            params.put("TTHOADON",1+""); // đã thanh toán
+                                            params.put("TTBAN",0+""); // trả về bàn trống
+                                            return params;
+                                        }
+                                    };
+                                    requestQueue.add(stringRequest);
+
+
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> params = new HashMap<String, String>();
+                            // bàn chưa thanh toán
+                            params.put("THANHTOAN",String.valueOf(0));
+                            // trạng thái bàn
+                            params.put("TRANGTHAIBAN",String.valueOf(ban.getTrangthai()));
+                            params.put("STTBAN",String.valueOf(ban.getStt()));
+                            return params;
+                        }
+                    };
+
+                    requestQueueIDhoadon.add(stringRequestIDhoadon);
+
+                }else{
+                    CheckConnect.ShowToast(getActivity(),"Vui lòng chọn món để thanh toán mua hàng");
+                }
             }
         });
     }

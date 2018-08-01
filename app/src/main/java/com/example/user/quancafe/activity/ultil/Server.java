@@ -19,5 +19,6 @@ public class Server {
     public static String DuongdanThemMon = "http://" + localhost + "/Cafe/ConnectServerCafe/themctdatmon.php";
     public static String Duongdangetidhoadontheoban = "http://" + localhost + "/Cafe/ConnectServerCafe/getidhoadontheoban.php";
     public static String DuongdangCapNhatHoaDon = "http://" + localhost + "/Cafe/ConnectServerCafe/updatehoadon.php";
+    public static String DuongdangCapNhatTrangThaiHoaDon = "http://" + localhost + "/Cafe/ConnectServerCafe/updatetrangthaihoadon.php";
     public static String Duongdanggetdsmonchuathanhtoantheoban = "http://" + localhost + "/Cafe/ConnectServerCafe/getdsmchuatttheoban.php";
 }
