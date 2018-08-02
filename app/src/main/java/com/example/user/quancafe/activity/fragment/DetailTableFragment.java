@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -37,7 +38,8 @@ import java.util.Map;
  * Created by User on 13/07/2018.
  */
 
-public class DetailTableFragment extends Fragment {
+public class DetailTableFragment extends Fragment implements
+        ChiTietBanAdapter.customButtonListener {
     private View view;
     private Bundle bundle;
     private Ban ban;
@@ -67,13 +69,28 @@ public class DetailTableFragment extends Fragment {
            // CheckConnect.ShowToast(getActivity(),ban.getStt()+"");
             GetDanhSachMonTheoBan(ban.getStt());
             ActionClick(ban);
+            ActionClickButton(ban);
 
 
         }
         return view;
     }
 
+    private void ActionClickButton(Ban ban) {
+//        ChiTietBanAdapter.ViewHolder viewHolder;
+//         Button btnplusCTBAN = (Button) view.findViewById(R.id.btnplus);
+//        btnplusCTBAN.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CheckConnect.ShowToast(getActivity(),"hai");
+//            }
+//        });
+    }
+
     private void ActionClick(final Ban ban) {
+        // mua hàng
+        // nếu bàn còn trống thì get id hóa đơn thêm món ăn vào hóa đơn cũ
+        // ngược lại tạo hóa đơn mới thêm món ăn vào hóa đơn mới
         btntieptucmua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,6 +187,9 @@ public class DetailTableFragment extends Fragment {
 
             }
         });
+        // thanh toán hóa đơn
+        // đưa trạng thái hóa đơn về trạng thái đã thanh toán
+        // đưa trạng thái bàn về trạng thái trống
         btnthanhtoan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,10 +364,13 @@ public class DetailTableFragment extends Fragment {
 
     }
 
+
+
     private void AnhXa() {
         listViewGioHangCTBAN = view.findViewById(R.id.listviewGioHang_detailtable);
         mangGiohangChiTietBan = new ArrayList<>();
         chiTietBanAdapter = new ChiTietBanAdapter(mangGiohangChiTietBan,getActivity());
+        chiTietBanAdapter.setCustomButtonListner(DetailTableFragment.this);
         listViewGioHangCTBAN.setAdapter(chiTietBanAdapter);
         btnthanhtoan = view.findViewById(R.id.btnThanhtoangiohang_detailtable);
         btntieptucmua = view.findViewById(R.id.btnTieptucgiohang_detailtable);
@@ -366,9 +389,17 @@ public class DetailTableFragment extends Fragment {
     }
 
 
+    @Override
+    public void onButtonClickListnerPlus(int position, Giohang value) {
+        Toast.makeText(getActivity(), "id " + value.getIdsp()+" soluong "+ value.getSoluongsp(),
+                Toast.LENGTH_SHORT).show();
 
+    }
 
+    @Override
+    public void onButtonClickListnerMinus(int position, Giohang value) {
+        Toast.makeText(getActivity(), "Button click " + value.getIdsp(),
+                Toast.LENGTH_SHORT).show();
 
-
-
+    }
 }

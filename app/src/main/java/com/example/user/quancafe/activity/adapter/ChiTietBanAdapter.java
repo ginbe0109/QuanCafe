@@ -26,6 +26,15 @@ import static com.example.user.quancafe.R.id.btnvalues;
 public class ChiTietBanAdapter extends BaseAdapter {
     ArrayList<Giohang> arrayGioHangCTBAN;
     Context context;
+    customButtonListener customListner;
+
+    public interface customButtonListener {
+        public void onButtonClickListnerPlus(int position, Giohang value);
+        public void onButtonClickListnerMinus(int position, Giohang value);
+    }
+    public void setCustomButtonListner(customButtonListener listener) {
+        this.customListner = listener;
+    }
 
     public ChiTietBanAdapter(ArrayList<Giohang> arrayGioHangCTBAN, Context context) {
         this.arrayGioHangCTBAN = arrayGioHangCTBAN;
@@ -69,7 +78,7 @@ public class ChiTietBanAdapter extends BaseAdapter {
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Giohang giohang = (Giohang) getItem(position);
+        final Giohang giohang = (Giohang) getItem(position);
         viewHolder.textViewTenGoiHangCTBAN.setText(giohang.getTensp());
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         viewHolder.textViewGiaGioHangCTBAN.setText(decimalFormat.format(giohang.getGiasp())+ " Đ");
@@ -123,6 +132,10 @@ public class ChiTietBanAdapter extends BaseAdapter {
                     finalViewHolder.btnminusCTBAN.setVisibility(View.VISIBLE);
                     finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
                 }
+                // set on click detailtable
+                if (customListner != null) {
+                    customListner.onButtonClickListnerPlus(position,giohang);
+                }
 
             }
         });
@@ -154,6 +167,10 @@ public class ChiTietBanAdapter extends BaseAdapter {
                     finalViewHolder.btnplusCTBAN.setVisibility(View.VISIBLE);
                     finalViewHolder.btnminusCTBAN.setVisibility(View.VISIBLE);
                     finalViewHolder.btnvaluesCTBAN.setText(String.valueOf(slmoinhat));
+                }
+                // set on click detailtable
+                if (customListner != null) {
+                    customListner.onButtonClickListnerMinus(position,giohang);
                 }
             }
         });

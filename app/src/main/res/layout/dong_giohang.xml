@@ -57,6 +57,7 @@
                 android:focusable="false"
                 android:id="@+id/btnminus"
                 android:layout_marginTop="5dp"
+
                 />
             <Button
                 android:layout_width="70dp"

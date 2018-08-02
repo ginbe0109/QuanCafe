@@ -2,7 +2,6 @@ package com.example.user.quancafe.activity.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -90,8 +89,9 @@ public class DasboardFragment extends Fragment {
         btntieptucmua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),MainActivity.class);
-                startActivity(intent);
+                ListFoodFragment noti = new ListFoodFragment();
+                //Inflate the fragment
+                getFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, noti).commit();
             }
         });
         btnthanhtoan.setOnClickListener(new View.OnClickListener() {
