@@ -1,15 +1,17 @@
 package com.example.user.quancafe.activity.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -19,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.quancafe.R;
+import com.example.user.quancafe.activity.activity.LogInActivity;
 import com.example.user.quancafe.activity.adapter.ChiTietBanAdapter;
 import com.example.user.quancafe.activity.model.Ban;
 import com.example.user.quancafe.activity.model.Giohang;
@@ -30,7 +33,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,23 +75,13 @@ public class DetailTableFragment extends Fragment implements
            // CheckConnect.ShowToast(getActivity(),ban.getStt()+"");
             GetDanhSachMonTheoBan(ban.getStt());
             ActionClick(ban);
-            ActionClickButton(ban);
+            CatchOnItemListView();
 
 
         }
         return view;
     }
 
-    private void ActionClickButton(Ban ban) {
-//        ChiTietBanAdapter.ViewHolder viewHolder;
-//         Button btnplusCTBAN = (Button) view.findViewById(R.id.btnplus);
-//        btnplusCTBAN.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                CheckConnect.ShowToast(getActivity(),"hai");
-//            }
-//        });
-    }
 
     private void ActionClick(final Ban ban) {
         // mua hàng
@@ -390,16 +386,198 @@ public class DetailTableFragment extends Fragment implements
 
 
     @Override
-    public void onButtonClickListnerPlus(int position, Giohang value) {
-        Toast.makeText(getActivity(), "id " + value.getIdsp()+" soluong "+ value.getSoluongsp(),
-                Toast.LENGTH_SHORT).show();
+    public void onButtonClickListner(int position, final Giohang value) {
+//        Toast.makeText(getActivity(), "id " + value.getIdsp()+" soluong "+ value.getSoluongsp()+" ban "+ban.getStt(),
+//                Toast.LENGTH_SHORT).show();
+        Date time = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final String currenttime = df.format(time);
+        RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                String mahd = "";
+                if (response !=null){
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(response);
+                        // get mã hóa đơn khi bàn chưa thanh toán
+                        mahd = jsonObject.getString("mahd");
+                        stthdon = Integer.parseInt(mahd);
+                        //CheckConnect.ShowToast(getActivity(),stthdon+"");
+                        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdangCapNhatSoLuongMon, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }){
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                HashMap<String, String> params = new HashMap<String, String>();
+                                // bàn chưa thanh toán
+                                params.put("MAND", LogInActivity.mand+"");
+                                params.put("MAMON",value.getIdsp()+"");
+                                params.put("STTBAN",ban.getStt()+"");
+                                params.put("SOHD",stthdon+"");
+                                params.put("THOIGIAN",currenttime);
+                                // trạng thái bàn
+                                params.put("TRANGTHAI",String.valueOf(0));
+                                params.put("SOLUONG",value.getSoluongsp()+"");
+                                return params;
+                            }
+                        };
+                        requestQueue.add(stringRequest);
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                // bàn chưa thanh toán
+                params.put("THANHTOAN",String.valueOf(0));
+                // trạng thái bàn
+                params.put("TRANGTHAIBAN",String.valueOf(ban.getTrangthai()));
+                params.put("STTBAN",String.valueOf(ban.getStt()));
+                return params;
+            }
+        };
+
+        requestQueueIDhoadon.add(stringRequestIDhoadon);
+
+    }
+    // sự kiện nhấn lâu listView
+    private void CatchOnItemListView() {
+        listViewGioHangCTBAN.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Xác nhận xóa sản phẩm");
+                builder.setMessage("Bạn có chắc xóa sản phẩm đã chọn?");
+                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    //CheckConnect.ShowToast(getActivity(),mangGiohangChiTietBan.get(position).getIdsp()+"");
+                        XoaMon(mangGiohangChiTietBan.get(position));
+
+
+                    }
+                });
+                builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        giohangAdapter.notifyDataSetChanged();
+//                        EvenUtil();
+                    }
+                });
+                // cho AlertDilog
+                builder.show();
+                return true;
+            }
+        });
+    }
+
+    private void XoaMon(final Giohang giohang) {
+        //CheckConnect.ShowToast(getActivity(),"id"+giohang.getIdsp());
+        //CheckConnect.ShowToast(getActivity(),"ban"+ban.getStt());
+        RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                String mahd = "";
+                if (response !=null){
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(response);
+                        // get mã hóa đơn khi bàn chưa thanh toán
+                        mahd = jsonObject.getString("mahd");
+                        stthdon = Integer.parseInt(mahd);
+                        //CheckConnect.ShowToast(getActivity(),stthdon+"");
+                        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongdanXoaMon, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if(response.equals("1")){
+                                    DetailTableFragment fragment = new DetailTableFragment();
+                                    Bundle thongtinBan = new Bundle();
+                                    thongtinBan.putSerializable("thongtinban", ban);
+                                    fragment.setArguments(thongtinBan);
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+                                    CheckConnect.ShowToast(getActivity(),"Xóa thành công");
+
+                                }else{
+                                    CheckConnect.ShowToast(getActivity(),"Xóa không thành công");
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }){
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                HashMap<String, String> params = new HashMap<String, String>();
+                                // bàn chưa thanh toán
+                                params.put("MAMON",giohang.getIdsp()+"");
+                                params.put("STTBAN",ban.getStt()+"");
+                                params.put("SOHD",stthdon+"");
+
+                                return params;
+                            }
+                        };
+                        requestQueue.add(stringRequest);
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                // bàn chưa thanh toán
+                params.put("THANHTOAN",String.valueOf(0));
+                // trạng thái bàn
+                params.put("TRANGTHAIBAN",String.valueOf(ban.getTrangthai()));
+                params.put("STTBAN",String.valueOf(ban.getStt()));
+                return params;
+            }
+        };
+
+        requestQueueIDhoadon.add(stringRequestIDhoadon);
 
     }
 
-    @Override
-    public void onButtonClickListnerMinus(int position, Giohang value) {
-        Toast.makeText(getActivity(), "Button click " + value.getIdsp(),
-                Toast.LENGTH_SHORT).show();
 
-    }
 }

@@ -29,8 +29,8 @@ public class ChiTietBanAdapter extends BaseAdapter {
     customButtonListener customListner;
 
     public interface customButtonListener {
-        public void onButtonClickListnerPlus(int position, Giohang value);
-        public void onButtonClickListnerMinus(int position, Giohang value);
+        public void onButtonClickListner(int position, Giohang value);
+
     }
     public void setCustomButtonListner(customButtonListener listener) {
         this.customListner = listener;
@@ -134,7 +134,7 @@ public class ChiTietBanAdapter extends BaseAdapter {
                 }
                 // set on click detailtable
                 if (customListner != null) {
-                    customListner.onButtonClickListnerPlus(position,giohang);
+                    customListner.onButtonClickListner(position,giohang);
                 }
 
             }
@@ -170,7 +170,7 @@ public class ChiTietBanAdapter extends BaseAdapter {
                 }
                 // set on click detailtable
                 if (customListner != null) {
-                    customListner.onButtonClickListnerMinus(position,giohang);
+                    customListner.onButtonClickListner(position,giohang);
                 }
             }
         });
