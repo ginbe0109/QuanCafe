@@ -161,7 +161,7 @@ public class DasboardFragment extends Fragment {
                 // nếu bàn trống thì tạo hóa đơn mới
                 // ngược lại không tạo hóa đơn mới. lấy id hóa đơn chưa thanh toán của từng bàn và cập trị giá của hóa đơn
                 if(arrayListBan.get(position).getTrangthai() == 0){
-                    CheckConnect.ShowToast(getActivity(),"bàn trống");
+                    //CheckConnect.ShowToast(getActivity(),"bàn trống");
                     // tạo hóa đơn
                     RequestQueue requestQueueHoaDon = Volley.newRequestQueue(getActivity().getApplicationContext());
                     StringRequest stringRequestHoaDon = new StringRequest(Request.Method.POST, Server.DuongdanThemHoaDon, new Response.Listener<String>() {
@@ -291,7 +291,7 @@ public class DasboardFragment extends Fragment {
 
                     requestQueueHoaDon.add(stringRequestHoaDon);
                 }else{
-                    CheckConnect.ShowToast(getActivity(),"có người");
+                    //CheckConnect.ShowToast(getActivity(),"có người");
                     RequestQueue requestQueueIDhoadon = Volley.newRequestQueue(getActivity().getApplicationContext());
                     StringRequest stringRequestIDhoadon = new StringRequest(Request.Method.POST, Server.Duongdangetidhoadontheoban, new Response.Listener<String>() {
                         @Override
@@ -332,7 +332,7 @@ public class DasboardFragment extends Fragment {
                                                         if(response.equals("1")){
                                                             // làm sạch mảng gio hang
                                                             MainActivity.mangGiohang.clear();
-                                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Tên đã thêm dư liệu giỏ hàng thành công");
+                                                            CheckConnect.ShowToast(getActivity().getApplicationContext(),"Đã thêm thành công");
 
 
 

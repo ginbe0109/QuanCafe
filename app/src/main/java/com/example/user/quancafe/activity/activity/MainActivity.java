@@ -238,7 +238,9 @@ public class MainActivity extends AppCompatActivity {
         // thoát tài khoản
         LogInActivity.isLogin = false;
         Intent intent = new Intent(getApplicationContext(),LogInActivity.class);
+        intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         finish();
     }
 

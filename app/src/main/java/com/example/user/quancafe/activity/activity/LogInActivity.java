@@ -90,9 +90,14 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void sendToMain() {
+
+             /* Create an intent that will start the main activity. */
         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
         startActivity(intent);
+        //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
+
+
     }
 
     private void saveAccount() {
@@ -113,14 +118,19 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void ActionClick() {
+
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
-                // giữ màn hình khi thoát ra
-                intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+
+            Intent intent = new Intent(getApplicationContext(),SignUpActivity.class);
+            // giữ màn hình khi thoát ra
+            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
+
+
             }
         });
         btnLogIn.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +171,9 @@ public class LogInActivity extends AppCompatActivity {
                         mand = jsonObject.getInt("mand");
                         CheckConnect.ShowToast(getApplicationContext(),message);
                         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                        intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
                     }else{
                         isLogin = false;

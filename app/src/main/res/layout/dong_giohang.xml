@@ -57,6 +57,8 @@
                 android:focusable="false"
                 android:id="@+id/btnminus"
                 android:layout_marginTop="5dp"
+                android:background="@drawable/border_white"
+                android:textColor="#fff"
 
                 />
             <Button
@@ -77,6 +79,8 @@
                 android:focusable="false"
                 android:id="@+id/btnplus"
                 android:layout_marginTop="5dp"
+                android:background="@drawable/boder_red"
+                android:textColor="#fff"
                 />
         </LinearLayout>
 

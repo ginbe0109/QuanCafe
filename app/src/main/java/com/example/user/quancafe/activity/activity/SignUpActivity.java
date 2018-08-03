@@ -49,17 +49,27 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
     }
+//    @Override
+//    public void finish() {
+//        super.finish();
+//
+//    }
 
 
     private void ActionClick() {
         textLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
-                // giữ màn hình khi thoát ra
-                intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+
+            Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+            // giữ màn hình khi thoát ra
+            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
+
+
+
             }
         });
         btnSignUp.setOnClickListener(new View.OnClickListener() {
