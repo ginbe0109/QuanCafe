@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import com.example.user.quancafe.activity.fragment.DasboardFragment;
 import com.example.user.quancafe.activity.fragment.HomeFragment;
 import com.example.user.quancafe.activity.fragment.ListFoodFragment;
 import com.example.user.quancafe.activity.fragment.ProfileFragment;
+import com.example.user.quancafe.activity.fragment.SearchFragment;
 import com.example.user.quancafe.activity.model.Giohang;
 import com.example.user.quancafe.activity.model.Menu;
 
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     private CircleImageView circleImageUserSignIn;
     private TextView textUserSignIn;
+
+
 
     // mảng giỏ hàng chứa toàn bộ thông tin của các màn hình
     // khai báo public static để các màng hình đều truy cấp được để không mất dữ liệu
@@ -256,6 +260,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        // khởi tạo menu
+        getMenuInflater().inflate(R.menu.menu_search,menu);
+        MenuItem searchItem = menu.findItem(R.id.menuSearch);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Tìm kiếm...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.isEmpty()){
+//                    naviBottom.animate()
+//                            .translationY(naviBottom.getHeight()).setDuration(1000).start();
+//                    naviBottom.setVisibility(View.INVISIBLE);
+                    //CheckConnect.ShowToast(getApplicationContext(),newText);
+                    SearchMonAn(newText);
+                }else{
+//                    naviBottom.setVisibility(View.VISIBLE);
+//                    naviBottom.animate().translationY(0).setDuration(1000).start();
+                    ListFoodFragment fragment = new ListFoodFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+
+                }
+                return true;
+            }
+        });
+        return true;
+    }
+
+    private void SearchMonAn(String newText) {
+        SearchFragment fragment = new SearchFragment();
+        Bundle thongtinBan = new Bundle();
+        thongtinBan.putString("keyword",newText);
+        fragment.setArguments(thongtinBan);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMain, fragment).commit();
+
+    }
+
     private void AnhXa() {
         drawerLayoutMain = (DrawerLayout) findViewById(drawerLayout);
         toolbar = (Toolbar) findViewById(R.id.toolBarMain);
@@ -308,6 +356,11 @@ public class MainActivity extends AppCompatActivity {
             // ngược lại mảng không có dữ liệu thì cấp phát vùng bộ nhớ
             mangGiohang = new ArrayList<>();
         }
+
+//        naviBottom.setVisibility(View.VISIBLE);
+//        naviBottom.animate().translationY(0).setDuration(1000).start();
+
+
 
 
     }

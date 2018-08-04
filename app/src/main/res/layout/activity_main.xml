@@ -22,6 +22,7 @@
                 android:background="#67b9b7">
 
             </android.support.v7.widget.Toolbar>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,19 +46,7 @@
 
             </android.support.design.widget.BottomNavigationView>
 
-            <!--<com.aurelhubert.ahbottomnavigation.AHBottomNavigation-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom"-->
-                <!--android:id="@+id/bottomNavigationMain"-->
-                <!--app:itemIconTint="@color/colorNavIcon"-->
-                <!--app:itemTextColor="@color/colorNavText"-->
-                <!--app:menu="@menu/navigationbottom"-->
-                <!--android:background="@color/colorPrimary"-->
 
-                <!--&gt;-->
-
-            <!--</com.aurelhubert.ahbottomnavigation.AHBottomNavigation>-->
         </LinearLayout>
 
 

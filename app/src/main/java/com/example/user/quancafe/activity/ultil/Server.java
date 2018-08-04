@@ -22,5 +22,6 @@ public class Server {
     public static String DuongdangCapNhatTrangThaiHoaDon = "http://" + localhost + "/Cafe/ConnectServerCafe/updatetrangthaihoadon.php";
     public static String DuongdangCapNhatSoLuongMon = "http://" + localhost + "/Cafe/ConnectServerCafe/updatesoluongmon.php";
     public static String DuongdanXoaMon = "http://" + localhost + "/Cafe/ConnectServerCafe/deletemon.php";
+    public static String DuongdanTimKiem = "http://" + localhost + "/Cafe/ConnectServerCafe/searchmon.php";
     public static String Duongdanggetdsmonchuathanhtoantheoban = "http://" + localhost + "/Cafe/ConnectServerCafe/getdsmchuatttheoban.php";
 }
