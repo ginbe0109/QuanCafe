@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search,menu);
         MenuItem searchItem = menu.findItem(R.id.menuSearch);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Tìm kiếm...");
+        searchView.setQueryHint("Tên món, đơn giá,...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override

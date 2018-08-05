@@ -1,15 +1,31 @@
 package com.example.user.quancafe.activity.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -21,12 +37,20 @@ import com.android.volley.toolbox.Volley;
 import com.example.user.quancafe.R;
 import com.example.user.quancafe.activity.ultil.CheckConnect;
 import com.example.user.quancafe.activity.ultil.Server;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
+import static com.example.user.quancafe.activity.ultil.CheckConnect.ShowToast;
 
 public class LogInActivity extends AppCompatActivity {
     private EditText editAccount,editPassWord;
@@ -49,13 +73,216 @@ public class LogInActivity extends AppCompatActivity {
     public static boolean isLogin = false;
     public static int mand = 0;
 
+    TextView textViewConnectWifi;
+    //Barcode Scanning
+    private ZXingScannerView mScannerView;
+    private static final int REQUSET_CODE_CAMERA = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
         AnhXa();
         ActionClick();
+        ActionBarCode();
+
     }
+    public boolean ConnectToNetworkWPA( String networkSSID, String password )
+    {
+        try {
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
+
+            conf.preSharedKey = "\"" + password + "\"";
+
+            conf.status = WifiConfiguration.Status.ENABLED;
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+            Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
+
+            WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.addNetwork(conf);
+
+            Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
+
+            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for( WifiConfiguration i : list ) {
+                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    Log.d("re connecting", i.SSID + " " + conf.preSharedKey);
+
+                    break;
+                }
+            }
+
+
+            //WiFi Connection success, return true
+            return true;
+        } catch (Exception ex) {
+            System.out.println(Arrays.toString(ex.getStackTrace()));
+            return false;
+        }
+    }
+
+    private void ActionBarCode() {
+        textViewConnectWifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityCompat.requestPermissions(LogInActivity.this,
+                        new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_WIFI_STATE,
+                                Manifest.permission.CHANGE_WIFI_STATE,Manifest.permission.ACCESS_NETWORK_STATE},
+                        REQUSET_CODE_CAMERA
+                );
+                //ConnectToNetworkWPA("Phuoc","123456789");
+            }
+        });
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUSET_CODE_CAMERA && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            checkBarcode(mScannerView);
+        }else{
+            Toast.makeText(this, "Bạn vui lòng mở camera", Toast.LENGTH_SHORT).show();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+    // This is your click listener
+    public void checkBarcode(View v) {
+        try {
+            IntentIntegrator integrator = new IntentIntegrator(LogInActivity.this);
+//            integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+            integrator.setPrompt("Scan a barcode");
+            integrator.setCameraId(0);  // Use a specific camera of the device
+            integrator.setBeepEnabled(false);
+            integrator.initiateScan();
+            //start the scanning activity from the com.google.zxing.client.android.SCAN intent
+            // Programmatically initialize the scanner view
+            // setContentView(mScannerView);
+        } catch (ActivityNotFoundException anfe) {
+            //on catch, show the download dialog
+            showDialog(LogInActivity.this, "No Scanner Found", "Download a scanner code activity?", "Yes", "No").show();
+        }
+    }
+    //alert dialog for downloadDialog
+    private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
+        AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
+        downloadDialog.setTitle(title);
+        downloadDialog.setMessage(message);
+        downloadDialog.setPositiveButton(buttonYes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                try {
+                    act.startActivity(intent);
+                } catch (ActivityNotFoundException anfe) {
+
+                }
+            }
+        });
+        downloadDialog.setNegativeButton(buttonNo, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        return downloadDialog.show();
+    }
+
+    //on ActivityResult method
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Log.d("MainActivity", "Cancelled scan");
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                ConnectWiFI(result.getContents());
+                //ConnectToNetworkWPA("Phone","123456789");
+                Log.d("MainActivity", "Scanned");
+                //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.d("MainActivity", "Weird");
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
+    private void ConnectWiFI(String contents) {
+//        Log.d("WIFI","type "+getTypeWifi(contents)+" ssid "+getSSIDWIFI(contents)
+//                +" pass "+ getPassWifi(contents));
+//        CheckConnect.ShowToast(getApplicationContext(),
+//                "type "+getTypeWifi(contents)+" ssid "+getSSIDWIFI(contents)
+//                        +" pass "+ getPassWifi(contents));
+
+        ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiCheck = connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (wifiCheck.isAvailable()) {
+            // Do whatever here
+            CheckConnect.ShowToast(getApplicationContext(),"Thiết bị của bạn đã tồn tại wifi");
+        }else{
+            ConnectToNetworkWPA(getSSIDWIFI(contents),getPassWifi(contents));
+
+        }
+
+
+
+    }
+
+    private String getTypeWifi(String wifi){
+        String type ="";
+        String typeWifi = "";
+        int i = wifi.indexOf("T");
+        int y = wifi.indexOf(";");
+        if(i>0){
+            type = wifi.substring(i,y).trim();
+            int k = type.indexOf(":");
+            typeWifi = type.substring(k+1,type.length()).trim();
+
+        }
+        return typeWifi;
+    }
+
+    private String getSSIDWIFI(String wifi){
+        String ssid = "";
+        int i = wifi.indexOf("S");
+        if(i>0){
+            String t1 ="";
+            t1 = wifi.substring(i).trim();
+            int j = t1.indexOf(";");
+            String t2 = t1.substring(0,j).trim();
+            int k = t2.indexOf(":");
+            ssid = t2.substring(k+1).trim();
+        }
+        return ssid;
+    }
+    private String getPassWifi(String wifi){
+        String pass = "";
+        int i = wifi.indexOf("S");
+        if(i>0){
+            String t1 ="";
+            t1 = wifi.substring(i).trim();
+            int j = t1.indexOf(";");
+            String t2 = t1.substring(j+3).trim();
+            int k = t2.indexOf(";");
+            pass = t2.substring(0,k).trim();
+        }
+
+        return pass;
+    }
+
+
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -142,7 +369,7 @@ public class LogInActivity extends AppCompatActivity {
                     ActionProgressbar("Đăng nhập tài khoản","Vui lòng chờ chờ giây lát để hoàn thành đăng nhập");
                     ActionLogIn(account,pass);
                 }else{
-                    CheckConnect.ShowToast(getApplicationContext(),"Vui lòng nhập đầy đủ thông tin");
+                    ShowToast(getApplicationContext(),"Vui lòng nhập đầy đủ thông tin");
                 }
             }
         });
@@ -169,7 +396,7 @@ public class LogInActivity extends AppCompatActivity {
                         isLogin = true;
                         message = jsonObject.getString("message");
                         mand = jsonObject.getInt("mand");
-                        CheckConnect.ShowToast(getApplicationContext(),message);
+                        ShowToast(getApplicationContext(),message);
                         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                         intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -178,7 +405,7 @@ public class LogInActivity extends AppCompatActivity {
                     }else{
                         isLogin = false;
                         message = jsonObject.getString("message");
-                        CheckConnect.ShowToast(getApplicationContext(),message);
+                        ShowToast(getApplicationContext(),message);
 
                     }
                 } catch (JSONException e) {
@@ -210,5 +437,7 @@ public class LogInActivity extends AppCompatActivity {
         editPassWord = (EditText) findViewById(R.id.editLogIn_Password);
         btnLogIn = (Button) findViewById(R.id.btnLogIn_LogIn);
         btnSignUp = (Button) findViewById(R.id.btnLogIn_SignUp);
+        textViewConnectWifi = (TextView) findViewById(R.id.connectwifi);
+        mScannerView = new ZXingScannerView(this);
     }
 }
