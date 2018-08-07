@@ -206,7 +206,7 @@ public class LogInActivity extends AppCompatActivity {
                 ConnectWiFI(result.getContents());
                 //ConnectToNetworkWPA("Phone","123456789");
                 Log.d("MainActivity", "Scanned");
-                //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Scanndded: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
         } else {
             Log.d("MainActivity", "Weird");
@@ -222,6 +222,7 @@ public class LogInActivity extends AppCompatActivity {
 //        CheckConnect.ShowToast(getApplicationContext(),
 //                "type "+getTypeWifi(contents)+" ssid "+getSSIDWIFI(contents)
 //                        +" pass "+ getPassWifi(contents));
+        //hai
 
         ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiCheck = connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
